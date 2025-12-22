@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const path = require('path');
+const { logger } = require('./middleware/logEvents');
 const PORT = process.env.PORT || 3500;
 
 // Middlewares
@@ -8,6 +9,8 @@ app.use(express.urlencoded({ extended: false })); // Parse URL-encoded bodies.
 app.use(express.json()); // Parse JSON bodies.
 app.use(express.static(path.join(__dirname, 'public'))); // Serve static files from 'public' directory.
 
+// Custom Middleware for Logging
+app.use(logger);
 
 app.get(/^\/($|index(\.html)?)/, (req, res) => {
     //res.sendFile('./views/index.html', { root: __dirname });
