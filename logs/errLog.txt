@@ -1,3 +1,8 @@
 20251222	09:54:17	de2fb894-bb19-4a6a-a32d-a25b8445d479	Error: Not allowed by CORS
 20251222	09:59:40	207d90f7-0d0d-4f2c-8e86-17583e93cfc7	Error: Not allowed by CORS
 20251222	10:09:31	febd6b18-7e64-482f-a7a7-ad3e5ce1abe7	Error: Not allowed by CORS
+20251222	17:05:57	47c65be7-8fae-410e-b919-2c2730b9babd	Error: ENOENT: no such file or directory, stat '/home/vacho/projects/nodejs_web_server/routes/views/index.html'
+20251222	17:05:58	479815bd-ad9d-42a5-bb81-a8fbf6367ba2	Error: ENOENT: no such file or directory, stat '/home/vacho/projects/nodejs_web_server/routes/views/index.html'
+20251222	17:12:37	881fe70a-ff8f-4fe1-9c0e-97897c042a1d	Error: ENOENT: no such file or directory, stat '/home/vacho/projects/nodejs_web_server/routes/views/index.html'
+20251223	08:07:29	c1f3a258-41a7-43ce-84a3-ea632c6b98fb	ReferenceError: employees is not defined
+20251223	08:07:59	d53b244b-06ab-4e7e-9d88-8e055638667c	Error: Cannot set headers after they are sent to the client
