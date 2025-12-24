@@ -15,14 +15,12 @@ app.use(express.json()); // Parse JSON bodies.
 
 // Serving static files.
 app.use('/', express.static(path.join(__dirname, 'public')));
-app.use('/subdir', express.static(path.join(__dirname, 'public')));
 
 // Custom Middleware for Logging.
 app.use(logger);
 
 // Server subdirectories.
 app.use('/employees', require('./routes/api/employees'));
-app.use('/subdir', require('./routes/subdir'));
 app.use('/', require('./routes/root'));
 
 app.use(errorHandler);

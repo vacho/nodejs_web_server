@@ -1,5 +1,7 @@
-const data = {};
-data.employees = require('../model/employees.json');
+const data = {
+    employees: require('../model/employees.json'),
+    setEmployees: function (data) { this.employees = data; }
+};
 
 const getEmployees = (req, res) => {
     res.json(data.employees);
@@ -7,41 +9,49 @@ const getEmployees = (req, res) => {
 
 const createEmployee = (req, res) => {
     const newEmployee = {
-        id: data.employees.length + 1,
+        id: data.employees[data.employees.length - 1].id + 1 || 1,
         firstname: req.body.firstname,
         lastname: req.body.lastname
     };
-    data.employees.push(newEmployee);
-    res.json(data.employees);
+    if (!newEmployee.firstname || !newEmployee.lastname) {
+        res.status(404).json({ message: 'Firstname and Lastname are required' });
+    }
+    data.setEmployees([...data.employees, newEmployee]);
+    res.status(201).json(data.employees);
 };
 
 const updateEmployee = (req, res) => {
     const employee = data.employees.find(emp => emp.id === parseInt(req.body.id));
     if (employee) {
-        employee.firstname = req.body.firstname || employee.firstname;
-        employee.lastname = req.body.lastname || employee.lastname;
-        res.json(employee);
+        employee.firstname = req.body.firstname ? req.body.firstname : employee.firstname;
+        employee.lastname = req.body.lastname ? req.body.lastname : employee.lastname;
+        const filtered = data.employees.filter(emp => emp.id !== parseInt(req.body.id));
+        const unsorted = [...filtered, employee];
+        data.setEmployees(unsorted.sort((a, b) => a.id > b.id ? 1 : a.id < b.id ? -1 : 0));
+        res.json(data.employees);
     } else {
-        res.status(404).json({ message: 'Employee not found' });
+        res.status(400).json({ message: `Employee ${req.body.id} not found`});
     }
 };
 
 const deleteEmployee = (req, res) => {
-    const index = data.employees.findIndex(emp => emp.id === parseInt(req.body.id));
-    if (index !== -1) {
-        const deletedEmployee = data.employees.splice(index, 1);
-        res.json(deletedEmployee);
+    const employee = data.employees.find(emp => emp.id === parseInt(req.body.id));
+    if (employee) {
+        const filtered = data.employees.filter(emp => emp.id === parseInt(req.body.id));
+        data.setEmployees([...filtered]);
+        res.json(data.employees);
     } else {
-        res.status(404).json({ message: 'Employee not found' });
+        res.status(400).json({ message: `Employee ${req.body.id} not found`});
     }
 };
 
 const getEmployee = (req, res) => {
+    res.json(data.employees);
     const employee = data.employees.find(emp => emp.id === parseInt(req.params.id));
     if (employee) {
         res.json(employee);
     } else {
-        res.status(404).json({ message: 'Employee not found' });
+        res.status(404).json({ message: `Employee ${req.params.id} not found` });
     }
 }
 
