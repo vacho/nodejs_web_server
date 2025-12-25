@@ -7,6 +7,13 @@ const data = {
     setUsers: function(data) { this.users = data }
 };
 
+const list = (req, res) => {
+    data.users.forEach(user => {
+        user.password = 'protected...';
+    });
+    res.json(data.users);
+};
+
 const create = async (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) {
@@ -58,4 +65,4 @@ const authenticate = async (req, res) => {
     console.log(user);
 };
 
-module.exports = { create, authenticate };
+module.exports = { create, authenticate, list };

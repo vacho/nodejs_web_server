@@ -169,3 +169,9 @@
 20251225	07:03:16	f1e8cf8e-055f-4245-b602-469ead8bd03b	POST	undefined	/users
 20251225	07:03:35	786f88d2-0bfa-4a72-ab68-4e6188c59d91	POST	undefined	/users/authenticate
 20251225	07:15:13	dc0ac909-55ca-4dff-864e-b94c235a7f32	POST	undefined	/users
+20251225	07:24:27	aadfffef-b2ca-44ef-b922-b89fe45707ea	GET	undefined	/users
+20251225	07:25:51	31f60d35-8f68-48b5-ab50-7e096d3f42c5	GET	undefined	/users
+20251225	07:27:31	3e43a687-0e4c-4de8-ac6e-eff2a1e58d27	GET	undefined	/users
+20251225	07:27:52	dd5d9100-a6fb-4095-9223-f0d2bb3dc74a	GET	undefined	/users
+20251225	07:28:10	cedccd90-31ce-4f0a-9206-6808cbe6187a	GET	undefined	/users
+20251225	07:28:37	715fb4ea-41e5-4c41-8d97-576641efac47	GET	undefined	/users
