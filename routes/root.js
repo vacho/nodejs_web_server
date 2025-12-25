@@ -6,12 +6,6 @@ router.get(/^\/($|index(\.html)?)/, (req, res) => {
     //res.sendFile('./views/index.html', { root: __dirname });
     res.sendFile(path.join(__dirname, '..', 'views', 'index.html')); 
 });
-router.get(/hello(\.html)?/, (req, res, next) => {
-    console.log('Attepted to load hello.html')
-    next();
-}, (req, res) => {
-    res.send('Hello World!');
-});
 
 // Chaining route handlers.
 const one = (req, res, next) => {

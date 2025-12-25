@@ -19,8 +19,9 @@ app.use('/', express.static(path.join(__dirname, 'public')));
 // Custom Middleware for Logging.
 app.use(logger);
 
-// Server subdirectories.
+// Server api.
 app.use('/employees', require('./routes/api/employees'));
+app.use('/users', require('./routes/api/users'));
 app.use('/', require('./routes/root'));
 
 app.use(errorHandler);

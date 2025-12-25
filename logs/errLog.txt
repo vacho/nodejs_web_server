@@ -10,3 +10,7 @@
 20251223	15:31:31	e8f2d049-79fe-4309-a058-fd43a1828bd0	Error: Not allowed by CORS
 20251224	17:26:01	9538c9ee-88f8-4af6-9539-8373d0ed0a6a	Error: Cannot set headers after they are sent to the client
 20251224	17:33:44	02c4f6e1-8486-461a-b79d-3b9a40e22024	Error: Cannot set headers after they are sent to the client
+20251224	19:06:11	0ddfb42e-1f58-45b3-90a2-a237358d30c4	TypeError: data.filter is not a function
+20251224	19:07:32	57a3900c-d349-4346-8cdc-eb94d5b53b65	TypeError: data.filter is not a function
+20251224	19:12:28	200e1ba8-f9aa-4ade-a294-70811942fac4	ReferenceError: user is not defined
+20251224	19:13:04	09c7e383-f8c7-429f-92b8-6d79ab59526b	ReferenceError: user is not defined
