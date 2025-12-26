@@ -9,11 +9,16 @@ const data = {
     setUsers: function(data) { this.users = data }
 };
 
+const blacklist = {
+    tokens: require('../model/blacklist.json'),
+    setTokens: function(data) { this.tokens = data }
+};
+
 const list = (req, res) => {
-    data.users.forEach(user => {
-        user.password = '...';
+    const users = data.users.map(user => {
+        return {...user, password: '...'};
     });
-    res.json(data.users);
+    res.json(users);
 };
 
 const create = async (req, res) => {
@@ -76,10 +81,10 @@ const authenticate = async (req, res) => {
                 path.join(__dirname, '..', 'model', 'users.json'),
                 JSON.stringify(data.users)    
             );
-            res.cookie('jwt', refreshToken, { httpOnly: true, maxAge: 24*60*60*1000 });
+            // TODO: set secure as true to https(prod env).
+            res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: false, maxAge: 24*60*60*1000 });
             // Return to the enduser the accessToken.
             res.json({accessToken});
-            //res.json({'success': `User ${username} logged in!`});
         } else {
             res.sendStatus(401); // unauthorized
         }
@@ -90,8 +95,7 @@ const authenticate = async (req, res) => {
 
 const refreshToken = (req, res) => {
     const cookies = req.cookies;
-    if (!cookies?.jwt) return res.status(401); //unauthorize
-    console.log(cookies.jwt);
+    if (!cookies?.jwt) return res.sendStatus(401); //unauthorize
     const refreshToken = cookies.jwt;
     // Validate the user.
     const user = data.users.find(u => u.refreshToken === refreshToken);
@@ -117,4 +121,44 @@ const refreshToken = (req, res) => {
     }
 }
 
-module.exports = { create, authenticate, list, refreshToken };
+const logout = async (req, res) => {
+    const cookies = req.cookies;
+    const authHeader = req.headers['authorization'];
+    const accessToken = authHeader && authHeader.split(' ')[1];
+
+    if (!cookies?.jwt) return res.sendStatus(204); //nocontent
+    const refreshToken = cookies.jwt;
+    
+    const user = data.users.find(u => u.refreshToken === refreshToken);
+    if (user) {
+        // REFRESH TOKEN
+        // Delete from DB.
+        const otherUsers = data.users.filter(u => u.refreshToken !== refreshToken);
+        const currentUser = {...user, refreshToken: ''};
+        data.setUsers([...otherUsers, currentUser]);
+        await fsPromises.writeFile(
+            path.join(__dirname, '..', 'model', 'users.json'),
+            JSON.stringify(data.users)
+        );
+        // Delete from cookies.
+        res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: false });
+        // Invalidate the current isn't needed because needs the 'jwt'.
+
+        // ACCESS TOKEN
+        // invalidate the current.
+        if (accessToken) {
+            blacklist.setTokens([...blacklist.tokens, accessToken]);
+            await fsPromises.writeFile(
+                path.join(__dirname, '..', 'model', 'blacklist.json'),
+                JSON.stringify(blacklist.tokens)
+            );
+        }
+
+        res.sendStatus(204); //no-content
+    } else {
+        res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: false  });
+        res.sendStatus(204); //no-content 
+    }
+}
+
+module.exports = { create, authenticate, list, refreshToken, logout };

@@ -9,5 +9,6 @@ router.route('/')
 
 router.post('/authenticate', userController.authenticate);
 router.get('/refresh', userController.refreshToken);
+router.get('/logout', verifyJWT, userController.logout);
 
 module.exports = router;
