@@ -1,6 +1,8 @@
 const fsPromises = require('fs').promises;
 const path = require('path');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 const data = {
     users: require('../model/users.json'),
@@ -9,7 +11,7 @@ const data = {
 
 const list = (req, res) => {
     data.users.forEach(user => {
-        user.password = 'protected...';
+        user.password = '...';
     });
     res.json(data.users);
 };
@@ -54,15 +56,36 @@ const authenticate = async (req, res) => {
         let match = await bcrypt.compare(password, user.password);
         if (match) {
             // Authenthicate.
-            // TODO: create a JWT (Jason Web Token)
-            res.json({'success': `User ${username} logged in!`});
+            
+            // Create a JWT (Jason Web Token)
+            const accessToken = jwt.sign(
+                { "username": user.username },
+                process.env.ACCESS_TOKEN_SECRET,
+                { expiresIn: '60s' }
+            );
+            const refreshToken = jwt.sign(
+                { "username": user.username },
+                process.env.REFRESH_TOKEN_SECRET,
+                { expiresIn: '1d' }
+            );
+            // Saving refreshToken with current user and into a cookie.
+            const otherUsers = data.users.filter(u => u.username !== user.username);
+            const currentUser = { ...user, refreshToken};
+            data.setUsers([...otherUsers, currentUser]);
+            await fsPromises.writeFile(
+                path.join(__dirname, '..', 'model', 'users.json'),
+                JSON.stringify(data.users)    
+            );
+            res.cookie('jwt', refreshToken, { httpOnly: true, maxAge: 24*60*60*1000 });
+            // Return to the enduser the accessToken.
+            res.json({accessToken});
+            //res.json({'success': `User ${username} logged in!`});
         } else {
             res.sendStatus(401); // unauthorized
         }
     } else {
         res.sendStatus(401); // unauthorized
     }
-    console.log(user);
 };
 
 module.exports = { create, authenticate, list };
