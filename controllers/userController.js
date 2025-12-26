@@ -36,6 +36,7 @@ const create = async (req, res) => {
         // Store the new user.
         const newUser = {
             'username': username,
+            'roles': { 'User': 2001 },
             'password': hashedPwd
         };
         data.setUsers([...data.users, newUser]);
@@ -61,10 +62,16 @@ const authenticate = async (req, res) => {
         let match = await bcrypt.compare(password, user.password);
         if (match) {
             // Authenthicate.
-            
+            const roles = Object.values(user.roles);
+
             // Create a JWT (Jason Web Token)
             const accessToken = jwt.sign(
-                { "username": user.username },
+                { 
+                    "UserInfo": {
+                        "username": user.username,
+                        "roles": roles
+                    }
+                },
                 process.env.ACCESS_TOKEN_SECRET,
                 { expiresIn: '60s' }
             );
@@ -108,8 +115,14 @@ const refreshToken = (req, res) => {
                 if (error || user.username !== decoded.username) {
                     return res.sendStatus(403); // invalida token
                 }
+                const roles = Object.values(user.roles);
                 const accessToken = jwt.sign(
-                    { "username": user.username },
+                    {
+                        "UserInfo": {
+                            "username": user.username,
+                            "roles": roles
+                        }
+                    },
                     process.env.ACCESS_TOKEN_SECRET,
                     { expiresIn: "60s"}
                 );
