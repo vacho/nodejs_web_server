@@ -8,5 +8,6 @@ router.route('/')
     .post(userController.create);
 
 router.post('/authenticate', userController.authenticate);
+router.get('/refresh', userController.refreshToken);
 
 module.exports = router;

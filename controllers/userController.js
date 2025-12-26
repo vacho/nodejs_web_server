@@ -47,7 +47,7 @@ const create = async (req, res) => {
 const authenticate = async (req, res) => {
     const {username, password} = req.body;
     if (!username || !password) {
-        res.status(400).json({'message': 'User and password are required'});
+        return res.status(400).json({'message': 'User and password are required'});
     }
     // Validate the user.
     const user = data.users.find(u => u.username === username);
@@ -88,4 +88,33 @@ const authenticate = async (req, res) => {
     }
 };
 
-module.exports = { create, authenticate, list };
+const refreshToken = (req, res) => {
+    const cookies = req.cookies;
+    if (!cookies?.jwt) return res.status(401); //unauthorize
+    console.log(cookies.jwt);
+    const refreshToken = cookies.jwt;
+    // Validate the user.
+    const user = data.users.find(u => u.refreshToken === refreshToken);
+    if (user) {
+        // evaluate jwt.
+        jwt.verify(
+            refreshToken,
+            process.env.REFRESH_TOKEN_SECRET,
+            (error, decoded) => {
+                if (error || user.username !== decoded.username) {
+                    return res.sendStatus(403); // invalida token
+                }
+                const accessToken = jwt.sign(
+                    { "username": user.username },
+                    process.env.ACCESS_TOKEN_SECRET,
+                    { expiresIn: "60s"}
+                );
+                res.json({ accessToken });
+            }    
+        );
+    } else {
+        res.sendStatus(403); // forbidden
+    }
+}
+
+module.exports = { create, authenticate, list, refreshToken };

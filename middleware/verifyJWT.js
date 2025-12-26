@@ -4,6 +4,7 @@ require('dotenv').config();
 const verifyJWT = (req, res, next) => {
     // Get the header.
     const authHeader =  req.headers['authorization'];
+    if (!authHeader) return res.sendStatus(401);
     // Extract the token.
     const token = authHeader.split(' ')[1];
     // Verify if the token is valid.
